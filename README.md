@@ -16,7 +16,7 @@ Supports two different screen size and orientations.
 Implementated ROOM persistence database for caching entries for use without network.
 
 
-![screenshot_20171205-121244](https://user-images.githubusercontent.com/24377762/33632904-1b6d5f7c-d9dd-11e7-849b-8fcf7e4e72f1.png | width = 300)
+<img src="https://user-images.githubusercontent.com/24377762/33632904-1b6d5f7c-d9dd-11e7-849b-8fcf7e4e72f1.png" width = "300" height = "600"/>
 
 ![screenshot_20171205-121255](https://user-images.githubusercontent.com/24377762/33632905-1b8df408-d9dd-11e7-9f4c-5675bbf6fa78.png =300x600)
 
