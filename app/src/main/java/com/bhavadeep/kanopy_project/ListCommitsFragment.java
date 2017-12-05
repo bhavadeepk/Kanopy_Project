@@ -17,6 +17,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -49,13 +52,22 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
 
     private static final int REQUEST_CODE = 1;
     RecyclerView recyclerView;
-    @SuppressLint("StaticFieldLeak")
-    static RecyclerViewAdapter adapter;
-    static List<MasterCommit> listCommits;
-    @SuppressLint("StaticFieldLeak")
-    static ProgressBar progressBar;
+    LinearLayoutManager layoutManager;
+    RecyclerViewAdapter adapter;
+    List<MasterCommit> listCommits;
+    ProgressBar progressBar;
     Context context;
     LocalDatabase database;
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.sort_by_date){
+            adapter.sortByDate();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private OnFragmentInteractionListener mListener;
     private boolean isListShowing;
@@ -79,6 +91,7 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         //To save the state of the fragment on activity recreation
         setRetainInstance(true);
@@ -94,7 +107,7 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
         listCommits = new ArrayList<>();
         commitEntityList = new ArrayList<>();
         adapter = new RecyclerViewAdapter(getActivity(), commitEntityList, this);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
         isListShowing = false;
@@ -243,7 +256,7 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
      * Asynchronous class to handle database tasks
      */
 
-    static class PopulateAsyncDB extends AsyncTask<Boolean, Void, Void>{
+    class PopulateAsyncDB extends AsyncTask<Boolean, Void, Void>{
 
         DaoAccess daoAccess;
         LocalDatabase localDatabase;

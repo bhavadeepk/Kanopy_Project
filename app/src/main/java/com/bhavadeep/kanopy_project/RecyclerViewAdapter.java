@@ -11,6 +11,8 @@ import android.widget.TextView;
 import com.bhavadeep.kanopy_project.Data.CommitEntity;
 import com.bhavadeep.kanopy_project.Models.*;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.CommitViewHolder> {
@@ -46,6 +48,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public int getItemCount() {
         return commits.size();
+    }
+
+    public void sortByDate() {
+        Collections.reverse(commits);
+        notifyDataSetChanged();
     }
 
     class CommitViewHolder extends RecyclerView.ViewHolder{

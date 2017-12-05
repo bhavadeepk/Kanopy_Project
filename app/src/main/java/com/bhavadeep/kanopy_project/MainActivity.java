@@ -3,13 +3,9 @@ package com.bhavadeep.kanopy_project;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
 
 import com.bhavadeep.kanopy_project.Data.CommitEntity;
-import com.bhavadeep.kanopy_project.Models.Author;
-import com.bhavadeep.kanopy_project.Models.AuthorGlobal;
-import com.bhavadeep.kanopy_project.Models.Commit;
-import com.bhavadeep.kanopy_project.Models.Committer;
-import com.bhavadeep.kanopy_project.Models.MasterCommit;
 
 public class MainActivity extends AppCompatActivity implements ListCommitsFragment.OnFragmentInteractionListener{
 
@@ -20,6 +16,14 @@ public class MainActivity extends AppCompatActivity implements ListCommitsFragme
     ListCommitsFragment listCommitsFragment;
     CommitDetailsFragment commitDetailsFragment;
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.action_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+
     /**
      * Use this factory method to initialize all variable and set content view
      *
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements ListCommitsFragme
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
        // Avoid unnecessary recreation of fragments on orientation change
         if(savedInstanceState != null){
