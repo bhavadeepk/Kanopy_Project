@@ -2,6 +2,7 @@ package com.bhavadeep.kanopy_project;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -125,18 +126,22 @@ public class CommitDetailsFragment extends Fragment {
         // Check if user profile picture is available
         if(imageUrl != null) {
             //Using picaso to load online images
-            Picasso.with(getActivity()).load(imageUrl).centerCrop().fit().into(imageProfileView, new Callback() {
-                @Override
-                public void onSuccess() {
-                    progressBar.setVisibility(View.INVISIBLE);
-                    isImageLoaded = true;
-                }
+            if(isInternetAvailable()) {
+                Picasso.with(getActivity()).load(imageUrl).centerCrop().fit().into(imageProfileView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        isImageLoaded = true;
+                    }
 
-                @Override
-                public void onError() {
-
-                }
-            });
+                    @Override
+                    public void onError() {
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
+            else
+                progressBar.setVisibility(View.INVISIBLE);
         }
         else {
             progressBar.setVisibility(View.INVISIBLE);
@@ -170,6 +175,12 @@ public class CommitDetailsFragment extends Fragment {
         return rootView;
     }
 
+    //Check Live internet connection
+    public boolean isInternetAvailable(){
+        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
+
+    }
     @Override
     public void onResume() {
         super.onResume();

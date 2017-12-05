@@ -1,6 +1,7 @@
 package com.bhavadeep.kanopy_project;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -48,15 +49,17 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
 
     private static final int REQUEST_CODE = 1;
     RecyclerView recyclerView;
-    RecyclerViewAdapter adapter;
-    List<MasterCommit> listCommits;
-    ProgressBar progressBar;
+    @SuppressLint("StaticFieldLeak")
+    static RecyclerViewAdapter adapter;
+    static List<MasterCommit> listCommits;
+    @SuppressLint("StaticFieldLeak")
+    static ProgressBar progressBar;
     Context context;
     LocalDatabase database;
 
     private OnFragmentInteractionListener mListener;
     private boolean isListShowing;
-    private List<CommitEntity> commitEntityList;
+    private static List<CommitEntity> commitEntityList;
     private Boolean isPopulating;
 
     public ListCommitsFragment() {
@@ -193,24 +196,6 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
         }
     }
 
-    public CommitEntity extractCommits(MasterCommit masterCommit){
-        CommitEntity commitEntity = new CommitEntity();
-        commitEntity.setAuthor(masterCommit.getCommit().getAuthor().getName());
-        commitEntity.setEmail(masterCommit.getCommit().getAuthor().getEmail());
-        commitEntity.setDate(masterCommit.getCommit().getCommitter().getDateFormatted().toString());
-        commitEntity.setMessage(masterCommit.getCommit().parseMessage());
-        commitEntity.setSha(masterCommit.getSha());
-        if(masterCommit.getAuthor()!= null){
-            commitEntity.setImageUrl(masterCommit.getAuthor().getAvatarUrl());
-            commitEntity.setProfileUrl(masterCommit.getAuthor().getHtmlUrl());
-        }
-        else {
-            commitEntity.setImageUrl(null);
-            commitEntity.setProfileUrl(null);
-        }
-        commitEntity.setHtmlUrl(masterCommit.getHtmlUrl());
-        return commitEntity;
-    }
 
     public void retrieveCloudData(){
         RetrofitClient.GitHub gitHubApi = RetrofitClient.getGitHUbService();
@@ -226,7 +211,7 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
                 }
                 listCommits.addAll(response.body());
                 isPopulating = true;
-                PopulateAsyncDB asyncDB = new PopulateAsyncDB();
+                PopulateAsyncDB asyncDB = new PopulateAsyncDB(database);
                 asyncDB.execute(isPopulating);
                 isListShowing = true;
             }
@@ -239,8 +224,9 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
         });
     }
 
+    //Retrieve data available in the local database
     public void retrieveLocalData(){
-            PopulateAsyncDB asyncDB = new PopulateAsyncDB();
+            PopulateAsyncDB asyncDB = new PopulateAsyncDB(database);
             isPopulating = false;
             asyncDB.execute(isPopulating);
     }
@@ -252,15 +238,44 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
 
     }
 
-    class PopulateAsyncDB extends AsyncTask<Boolean, Void, Void>{
+
+    /**
+     * Asynchronous class to handle database tasks
+     */
+
+    static class PopulateAsyncDB extends AsyncTask<Boolean, Void, Void>{
 
         DaoAccess daoAccess;
+        LocalDatabase localDatabase;
+
+       PopulateAsyncDB(LocalDatabase db) {
+           super();
+           localDatabase = db;
+       }
+
+       CommitEntity extractCommits(MasterCommit masterCommit){
+           CommitEntity commitEntity = new CommitEntity();
+           commitEntity.setAuthor(masterCommit.getCommit().getAuthor().getName());
+           commitEntity.setEmail(masterCommit.getCommit().getAuthor().getEmail());
+           commitEntity.setDate(masterCommit.getCommit().getCommitter().getDateFormatted().toString());
+           commitEntity.setMessage(masterCommit.getCommit().parseMessage());
+           commitEntity.setSha(masterCommit.getSha());
+           if(masterCommit.getAuthor()!= null){
+               commitEntity.setImageUrl(masterCommit.getAuthor().getAvatarUrl());
+               commitEntity.setProfileUrl(masterCommit.getAuthor().getHtmlUrl());
+           }
+           else {
+               commitEntity.setImageUrl(null);
+               commitEntity.setProfileUrl(null);
+           }
+           commitEntity.setHtmlUrl(masterCommit.getHtmlUrl());
+           return commitEntity;
+       }
 
 
-        @Override
+       @Override
         protected Void doInBackground(Boolean... booleans) {
-            database = LocalDatabase.getInstance(context);
-            daoAccess = database.getDaoAccess();
+            daoAccess = localDatabase.getDaoAccess();
             //Get data from cloud and populate local database
             if(booleans[0]) {
                 List<CommitEntity> commitEntities = new ArrayList<>();
