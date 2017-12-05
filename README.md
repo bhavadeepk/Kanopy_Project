@@ -9,14 +9,14 @@ Run it with Android studio on Phone/Tablet Environment
 
 #Progress
 
-Retrieved commits from github cloud and effectively parsed by Retrofit.\n
-List of commits populated into a recyclerview.\n
-Details of each commit on item selection.\n
-Supports two different screen size and orientations.\n
-Implementated ROOM persistence database for caching entries for use without network.\n
+Retrieved commits from github cloud and effectively parsed by Retrofit.
+List of commits populated into a recyclerview.
+Details of each commit on item selection.
+Supports two different screen size and orientations.
+Implementated ROOM persistence database for caching entries for use without network.
 
 
-![screenshot_20171205-121244](https://user-images.githubusercontent.com/24377762/33632904-1b6d5f7c-d9dd-11e7-849b-8fcf7e4e72f1.png =250x)
+![screenshot_20171205-121244](https://user-images.githubusercontent.com/24377762/33632904-1b6d5f7c-d9dd-11e7-849b-8fcf7e4e72f1.png | width = 300)
 
 ![screenshot_20171205-121255](https://user-images.githubusercontent.com/24377762/33632905-1b8df408-d9dd-11e7-9f4c-5675bbf6fa78.png =300x600)
 
