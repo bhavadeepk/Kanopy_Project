@@ -1,13 +1,18 @@
 package com.bhavadeep.kanopy_project;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +28,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,8 +39,9 @@ import retrofit2.Response;
  * Use the {@link ListCommitsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter.ListItemClickListener {
+public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter.ListItemClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
+    private static final int REQUEST_CODE = 1;
     RecyclerView recyclerView;
     RecyclerViewAdapter adapter;
     List<MasterCommit> listCommits;
@@ -53,7 +61,6 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
      *
      * @return A new instance of fragment ListCommitsFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static ListCommitsFragment newInstance() {
         return new ListCommitsFragment();
     }
@@ -61,6 +68,9 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //To save the state of the fragment on activity recreation
+        setRetainInstance(true);
 
     }
 
@@ -89,30 +99,40 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
         if(!isListShowing) {
             progressBar.setIndeterminate(true);
         }
-        RetrofitClient.GitHub gitHubApi = RetrofitClient.getGitHUbService();
 
-        Call<List<MasterCommit>> call = gitHubApi.listCommits();
+        //Check if internet permission is granted
 
-        call.enqueue(new Callback<List<MasterCommit>>() {
-            @Override
-            public void onResponse(@NonNull Call<List<MasterCommit>> call, @NonNull Response<List<MasterCommit>> response) {
+        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.INTERNET) == PERMISSION_GRANTED) {
+            //Retrofit client retrieving the cloud data and handling callbacks
+            RetrofitClient.GitHub gitHubApi = RetrofitClient.getGitHUbService();
 
-                if(progressBar.isShown()){
-                    progressBar.setVisibility(View.INVISIBLE);
+            Call<List<MasterCommit>> call = gitHubApi.listCommits();
+
+            call.enqueue(new Callback<List<MasterCommit>>() {
+                @Override
+                public void onResponse(@NonNull Call<List<MasterCommit>> call, @NonNull Response<List<MasterCommit>> response) {
+
+                    if (progressBar.isShown()) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
+                    listCommits.addAll(response.body());
+                    adapter.notifyDataSetChanged();
+                    isListShowing = true;
+
                 }
-                listCommits.addAll(response.body());
-                adapter.notifyDataSetChanged();
-                isListShowing = true;
+                @Override
+                public void onFailure(@NonNull Call<List<MasterCommit>> call, @NonNull Throwable t) {
 
+                    Toast.makeText(getActivity(), "Error Loading page", Toast.LENGTH_SHORT).show();
+
+                }
+            });
+        }
+        else{ // If device is marshmellow or above dynamically ask for internet permission
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, ListCommitsFragment.REQUEST_CODE);
             }
-
-            @Override
-            public void onFailure(@NonNull Call<List<MasterCommit>> call, @NonNull Throwable t) {
-
-                Toast.makeText(getActivity(), "Please Check Internet Connection", Toast.LENGTH_SHORT).show();
-
-            }
-        });
+        }
 
     }
 
@@ -144,13 +164,29 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onCommitSelected(MasterCommit commit);
+    }
+
+    //Callback method to see if user has granted the internet permission requested
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == REQUEST_CODE){
+            if(grantResults[0] != PERMISSION_GRANTED){
+                if(  shouldShowRequestPermissionRationale(Manifest.permission.CAMERA )) {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA}, ListCommitsFragment.REQUEST_CODE);
+                }
+                else
+                {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                }
+            }
+        }
     }
 }

@@ -76,6 +76,8 @@ public class CommitDetailsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Get the arguments sent from the activity
         if (getArguments() != null) {
             message = getArguments().getString(MESSAGE);
             author = getArguments().getString(AUTHOR);
@@ -84,8 +86,10 @@ public class CommitDetailsFragment extends Fragment {
             imageUrl = getArguments().getString(IMAGE_URL);
             profileUrl =  getArguments().getString(PROFILE_URL);
             commitUrl = getArguments().getString(COMMIT_URL);
-
         }
+
+        //To save the state of the fragment on activity recreation
+        setRetainInstance(true);
     }
 
     @Override
@@ -99,14 +103,27 @@ public class CommitDetailsFragment extends Fragment {
         TextView dateTextView = rootView.findViewById(R.id.date_tv);
         ImageView imageProfileView = rootView.findViewById(R.id.imageView);
         TextView commitTextView = rootView.findViewById(R.id.commit_tv);
+        TextView messageTitleTextView = rootView.findViewById(R.id.message_title);
+        TextView authorTitleTextView = rootView.findViewById(R.id.author_title);
+        TextView emailTitleTextView = rootView.findViewById(R.id.email_title);
+        TextView dateTitleTextView = rootView.findViewById(R.id.date_title);
         progressBar = rootView.findViewById(R.id.progressBar_2);
+
+        // set headers for attributes
+        messageTitleTextView.setText(R.string.message_title);
+        authorTitleTextView.setText(R.string.author_title);
+        emailTitleTextView.setText(R.string.email_title);
+        dateTitleTextView.setText(R.string.date_title);
         isImageLoaded = false;
 
         messageTextView.setText(message);
         authorTextView.setText(author);
         emailTextView.setText(email);
         dateTextView.setText(date);
+
+        // Check if user profile picture is available
         if(imageUrl != null) {
+            //Using picaso to load online images
             Picasso.with(getActivity()).load(imageUrl).centerCrop().fit().into(imageProfileView, new Callback() {
                 @Override
                 public void onSuccess() {
