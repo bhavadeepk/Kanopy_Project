@@ -15,5 +15,4 @@ Supports two different screen size and orientations.
 
 #Future
 Implementation of SQLite or ROOM persistence database for caching entries for use without network.
-Testing and commenting for code quality
 
