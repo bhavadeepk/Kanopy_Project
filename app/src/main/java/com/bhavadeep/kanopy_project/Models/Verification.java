@@ -23,32 +23,16 @@ public class Verification {
         return verified;
     }
 
-    public void setVerified(Boolean verified) {
-        this.verified = verified;
-    }
-
     public String getReason() {
         return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
     }
 
     public Object getSignature() {
         return signature;
     }
 
-    public void setSignature(Object signature) {
-        this.signature = signature;
-    }
-
     public Object getPayload() {
         return payload;
-    }
-
-    public void setPayload(Object payload) {
-        this.payload = payload;
     }
 
 }

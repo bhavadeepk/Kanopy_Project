@@ -8,12 +8,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 
-/**
- * Created by ${Bhavadeep} on 12/4/2017.
- */
-public class RetrofitClient{
 
-    private static String url= "https://api.github.com/repos/torvalds/linux/";
+class RetrofitClient{
+
+    private static final String url= "https://api.github.com/repos/torvalds/linux/";
 
 
     private static Retrofit getRetrofitInstance(){
@@ -23,7 +21,7 @@ public class RetrofitClient{
                 .build();
     }
 
-    public static GitHub getGitHUbService() {
+    static GitHub getGitHUbService() {
         return getRetrofitInstance().create(GitHub.class);
     }
 

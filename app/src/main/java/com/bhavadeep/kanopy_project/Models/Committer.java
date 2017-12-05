@@ -8,6 +8,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Committer {
 
@@ -21,10 +22,10 @@ public class Committer {
     @Expose
     private String date;
 
+    // Format raw string date into DateFormat
     public Date getDateFormatted(){
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
         try {
-            //String parsedDate[] = this.date.split("T");
             return df.parse(this.date);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -44,16 +45,8 @@ public class Committer {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getDate() {
         return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
 }

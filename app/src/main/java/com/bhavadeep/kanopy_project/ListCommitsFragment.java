@@ -132,6 +132,15 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(new String[]{Manifest.permission.CAMERA}, ListCommitsFragment.REQUEST_CODE);
             }
+            else{
+                Toast.makeText(getActivity(), "Please grant internet permission", Toast.LENGTH_SHORT).show();
+                //Intent to navigate user to the application settings page to enable internet permission
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
+                intent.setData(uri);
+                startActivity(intent);
+            }
         }
 
     }
@@ -180,6 +189,7 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
                 }
                 else
                 {
+                    //Intent to navigate user to the application settings page to enable internet permission
                     Intent intent = new Intent();
                     intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                     Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);

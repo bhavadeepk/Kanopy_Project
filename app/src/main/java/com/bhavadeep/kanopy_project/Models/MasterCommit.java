@@ -36,40 +36,20 @@ public class MasterCommit {
         return sha;
     }
 
-    public void setSha(String sha) {
-        this.sha = sha;
-    }
-
     public Commit getCommit() {
         return commit;
-    }
-
-    public void setCommit(Commit commit) {
-        this.commit = commit;
     }
 
     public String getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public String getHtmlUrl() {
         return htmlUrl;
     }
 
-    public void setHtmlUrl(String htmlUrl) {
-        this.htmlUrl = htmlUrl;
-    }
-
     public String getCommentsUrl() {
         return commentsUrl;
-    }
-
-    public void setCommentsUrl(String commentsUrl) {
-        this.commentsUrl = commentsUrl;
     }
 
     public AuthorGlobal getAuthor() {
@@ -84,16 +64,8 @@ public class MasterCommit {
         return committer;
     }
 
-    public void setCommitter(CommitterGlobal committer) {
-        this.committer = committer;
-    }
-
     public List<Parent> getParents() {
         return parents;
-    }
-
-    public void setParents(List<Parent> parents) {
-        this.parents = parents;
     }
 
 }

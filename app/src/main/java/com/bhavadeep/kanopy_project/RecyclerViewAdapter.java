@@ -33,9 +33,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(CommitViewHolder holder, int position) {
 
+      //Binding data to each list item
        MasterCommit masterCommit = commits.get(position);
-
-        String message = masterCommit.getCommit().parseMessage();
+       String message = masterCommit.getCommit().parseMessage();
+       //First line of message to display as title
        holder.titleTextView.setText(message.substring(0,message.indexOf("\n") ));
        holder.authorTextView.setText(masterCommit.getCommit().getAuthor().getName());
        holder.dateTextView.setText(masterCommit.getCommit().getCommitter().getDateFormatted().toString());
@@ -59,6 +60,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             authorTextView = itemView.findViewById(R.id.author);
             dateTextView = itemView.findViewById(R.id.date);
 
+            //Handle click on each list item
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -68,8 +70,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
+    /**
+     * Interface to establish communication between adapter and @ListCommitsFragment
+     */
     interface ListItemClickListener{
-        public void onItemClicked(int position);
+        void onItemClicked(int position);
     }
 
 }

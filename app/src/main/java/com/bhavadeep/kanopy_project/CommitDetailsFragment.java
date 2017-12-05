@@ -61,6 +61,7 @@ public class CommitDetailsFragment extends Fragment {
      */
     public static CommitDetailsFragment newInstance(String message, String author, String email, String date, String imageUrl, String profileUrl, String commitUrl) {
         CommitDetailsFragment fragment = new CommitDetailsFragment();
+       //Set arguments from the activity
         Bundle args = new Bundle();
         args.putString(MESSAGE, message);
         args.putString(AUTHOR, author);
@@ -140,6 +141,7 @@ public class CommitDetailsFragment extends Fragment {
         else {
             progressBar.setVisibility(View.INVISIBLE);
         }
+        //Handle click on the user profile picture
         imageProfileView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -153,7 +155,7 @@ public class CommitDetailsFragment extends Fragment {
                     }
                 }
             });
-
+        // Handle click on the full commit view request
         commitTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -56,34 +56,19 @@ public class Commit {
         return tree;
     }
 
-    public void setTree(Tree tree) {
-        this.tree = tree;
-    }
-
     public String getUrl() {
         return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public Integer getCommentCount() {
         return commentCount;
     }
 
-    public void setCommentCount(Integer commentCount) {
-        this.commentCount = commentCount;
-    }
-
     public Verification getVerification() {
         return verification;
     }
 
-    public void setVerification(Verification verification) {
-        this.verification = verification;
-    }
-
+    // Parse the raw message into clean multiline message
     public String parseMessage(){
         String messages[] = message.split("\\n");
         StringBuilder stringBuilder = new StringBuilder();
