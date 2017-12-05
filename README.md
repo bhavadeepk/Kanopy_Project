@@ -4,10 +4,11 @@ Technical Test from Kanopy
 List of Github Commits and details of each commit.
 
 #Execution
+
 Clone or download the project.
 Run it with Android studio on Phone/Tablet Environment
 
-#Progress
+#Tasks
 
 Retrieved commits from github cloud and effectively parsed by Retrofit.
 List of commits populated into a recyclerview.
