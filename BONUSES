@@ -3,3 +3,5 @@
 #3 Runtime permissions for devices running on Marshmellow or above
 #4 Retaining fragment state to avoid recreation on orientation change
 #5 Retorfit library to handle background network operations, enforcing Dependency Injection and abstraction of Model from View
+#6 ROOM data persistence library from Google I/O 2017 has been used to back up cloud data into local machine for smooth handling of application in no network situation
+
