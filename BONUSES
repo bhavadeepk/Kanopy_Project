@@ -1,0 +1,5 @@
+#1 Support for single-pane and multi-pane using dynamic and flexible UI fragments
+#2 Progress bars to avoid empty screen display during the network downloading
+#3 Runtime permissions for devices running on Marshmellow or above
+#4 Retaining fragment state to avoid recreation on orientation change
+#5 Retorfit library to handle background network operations, enforcing Dependency Injection and abstraction of Model from View
