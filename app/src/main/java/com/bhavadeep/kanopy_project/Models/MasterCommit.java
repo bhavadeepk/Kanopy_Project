@@ -1,24 +1,30 @@
 
 package com.bhavadeep.kanopy_project.Models;
 
+
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
 
 public class MasterCommit {
 
     @SerializedName("sha")
     @Expose
     private String sha;
+
     @SerializedName("commit")
     @Expose
     private Commit commit;
+
     @SerializedName("url")
     @Expose
     private String url;
+
     @SerializedName("html_url")
     @Expose
     private String htmlUrl;
+
     @SerializedName("comments_url")
     @Expose
     private String commentsUrl;
@@ -31,6 +37,7 @@ public class MasterCommit {
     @SerializedName("parents")
     @Expose
     private List<Parent> parents = null;
+
 
     public String getSha() {
         return sha;

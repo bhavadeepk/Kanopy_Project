@@ -4,6 +4,7 @@ package com.bhavadeep.kanopy_project;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.bhavadeep.kanopy_project.Data.CommitEntity;
 import com.bhavadeep.kanopy_project.Models.Author;
 import com.bhavadeep.kanopy_project.Models.AuthorGlobal;
 import com.bhavadeep.kanopy_project.Models.Commit;
@@ -57,21 +58,12 @@ public class MainActivity extends AppCompatActivity implements ListCommitsFragme
      * @param commit Commit selcted by the user
      */
     @Override
-    public void onCommitSelected(MasterCommit commit) {
-        Commit innerCommit = commit.getCommit();
-        AuthorGlobal author = commit.getAuthor();
-        Author innerAuthor = innerCommit.getAuthor();
-        Committer committer = innerCommit.getCommitter();
-        String avatarUrl = null;
-        String profileUrl = null;
-        if(author!=null) {
-           avatarUrl = author.getAvatarUrl();
-           profileUrl = author.getHtmlUrl();
-        }
+    public void onCommitSelected(CommitEntity commit) {
+
 
         //new instance of commit details fragment related to commit selected
-        commitDetailsFragment = CommitDetailsFragment.newInstance(innerCommit.parseMessage(), innerAuthor.getName(),
-                    innerAuthor.getEmail(), committer.getDateFormatted().toString(), avatarUrl , profileUrl, commit.getHtmlUrl());
+        commitDetailsFragment = CommitDetailsFragment.newInstance(commit.getMessage(), commit.getAuthor(), commit.getEmail(),
+                                            commit.getDate(), commit.getImageUrl() , commit.getProfileUrl(), commit.getHtmlUrl());
 
 
         // Checking if the device is on multi-pane support mode

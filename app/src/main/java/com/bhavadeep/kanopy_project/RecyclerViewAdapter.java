@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bhavadeep.kanopy_project.Data.CommitEntity;
 import com.bhavadeep.kanopy_project.Models.*;
 
 import java.util.List;
@@ -15,10 +16,10 @@ import java.util.List;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.CommitViewHolder> {
 
     private Context context;
-    private List<MasterCommit> commits;
+    private List<CommitEntity> commits;
     private ListItemClickListener listener;
 
-    RecyclerViewAdapter(Context mContext, List<MasterCommit> commitList, ListItemClickListener clickListener) {
+    RecyclerViewAdapter(Context mContext, List<CommitEntity> commitList, ListItemClickListener clickListener) {
         context = mContext;
         commits = commitList;
         listener = clickListener;
@@ -34,12 +35,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(CommitViewHolder holder, int position) {
 
       //Binding data to each list item
-       MasterCommit masterCommit = commits.get(position);
-       String message = masterCommit.getCommit().parseMessage();
+       CommitEntity commitEntity = commits.get(position);
+       String message = commitEntity.getMessage();
        //First line of message to display as title
        holder.titleTextView.setText(message.substring(0,message.indexOf("\n") ));
-       holder.authorTextView.setText(masterCommit.getCommit().getAuthor().getName());
-       holder.dateTextView.setText(masterCommit.getCommit().getCommitter().getDateFormatted().toString());
+       holder.authorTextView.setText(commitEntity.getAuthor());
+       holder.dateTextView.setText(commitEntity.getDate());
     }
 
     @Override

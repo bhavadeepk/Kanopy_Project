@@ -3,7 +3,9 @@ package com.bhavadeep.kanopy_project;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -19,6 +21,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.bhavadeep.kanopy_project.Data.CommitEntity;
+import com.bhavadeep.kanopy_project.Data.DaoAccess;
+import com.bhavadeep.kanopy_project.Data.LocalDatabase;
 import com.bhavadeep.kanopy_project.Models.MasterCommit;
 
 import java.util.ArrayList;
@@ -47,9 +52,12 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
     List<MasterCommit> listCommits;
     ProgressBar progressBar;
     Context context;
+    LocalDatabase database;
 
     private OnFragmentInteractionListener mListener;
     private boolean isListShowing;
+    private List<CommitEntity> commitEntityList;
+    private Boolean isPopulating;
 
     public ListCommitsFragment() {
         // Required empty public constructor
@@ -81,12 +89,13 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
         View rootView = inflater.inflate(R.layout.fragment_list_commits, container, false);
         recyclerView = rootView.findViewById(R.id.recyclerView);
         listCommits = new ArrayList<>();
-
-        adapter = new RecyclerViewAdapter(getActivity(), listCommits, this);
+        commitEntityList = new ArrayList<>();
+        adapter = new RecyclerViewAdapter(getActivity(), commitEntityList, this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
         isListShowing = false;
+        database =LocalDatabase.getInstance(context);
 
         progressBar = rootView.findViewById(R.id.progressBar);
 
@@ -103,30 +112,14 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
         //Check if internet permission is granted
 
         if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.INTERNET) == PERMISSION_GRANTED) {
-            //Retrofit client retrieving the cloud data and handling callbacks
-            RetrofitClient.GitHub gitHubApi = RetrofitClient.getGitHUbService();
+            //If internet is available get cloud data else look for local data
+            if(isInternetAvailable()){
+                retrieveCloudData();
+            }
+            else {
+                retrieveLocalData();
+            }
 
-            Call<List<MasterCommit>> call = gitHubApi.listCommits();
-
-            call.enqueue(new Callback<List<MasterCommit>>() {
-                @Override
-                public void onResponse(@NonNull Call<List<MasterCommit>> call, @NonNull Response<List<MasterCommit>> response) {
-
-                    if (progressBar.isShown()) {
-                        progressBar.setVisibility(View.INVISIBLE);
-                    }
-                    listCommits.addAll(response.body());
-                    adapter.notifyDataSetChanged();
-                    isListShowing = true;
-
-                }
-                @Override
-                public void onFailure(@NonNull Call<List<MasterCommit>> call, @NonNull Throwable t) {
-
-                    Toast.makeText(getActivity(), "Error Loading page", Toast.LENGTH_SHORT).show();
-
-                }
-            });
         }
         else{ // If device is marshmellow or above dynamically ask for internet permission
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -165,7 +158,7 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
 
     @Override
     public void onItemClicked(int position) {
-        mListener.onCommitSelected(listCommits.get(position));
+        mListener.onCommitSelected(commitEntityList.get(position));
     }
 
     /**
@@ -175,7 +168,7 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
      * activity.
      */
     public interface OnFragmentInteractionListener {
-        void onCommitSelected(MasterCommit commit);
+        void onCommitSelected(CommitEntity commit);
     }
 
     //Callback method to see if user has granted the internet permission requested
@@ -197,6 +190,97 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
                     startActivity(intent);
                 }
             }
+        }
+    }
+
+    public CommitEntity extractCommits(MasterCommit masterCommit){
+        CommitEntity commitEntity = new CommitEntity();
+        commitEntity.setAuthor(masterCommit.getCommit().getAuthor().getName());
+        commitEntity.setEmail(masterCommit.getCommit().getAuthor().getEmail());
+        commitEntity.setDate(masterCommit.getCommit().getCommitter().getDateFormatted().toString());
+        commitEntity.setMessage(masterCommit.getCommit().parseMessage());
+        commitEntity.setSha(masterCommit.getSha());
+        if(masterCommit.getAuthor()!= null){
+            commitEntity.setImageUrl(masterCommit.getAuthor().getAvatarUrl());
+            commitEntity.setProfileUrl(masterCommit.getAuthor().getHtmlUrl());
+        }
+        else {
+            commitEntity.setImageUrl(null);
+            commitEntity.setProfileUrl(null);
+        }
+        commitEntity.setHtmlUrl(masterCommit.getHtmlUrl());
+        return commitEntity;
+    }
+
+    public void retrieveCloudData(){
+        RetrofitClient.GitHub gitHubApi = RetrofitClient.getGitHUbService();
+
+        Call<List<MasterCommit>> call = gitHubApi.listCommits();
+
+        call.enqueue(new Callback<List<MasterCommit>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<MasterCommit>> call, @NonNull Response<List<MasterCommit>> response) {
+
+                if (progressBar.isShown()) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+                listCommits.addAll(response.body());
+                isPopulating = true;
+                PopulateAsyncDB asyncDB = new PopulateAsyncDB();
+                asyncDB.execute(isPopulating);
+                isListShowing = true;
+            }
+            @Override
+            public void onFailure(@NonNull Call<List<MasterCommit>> call, @NonNull Throwable t) {
+
+                Toast.makeText(getActivity(), "Error Loading page", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
+    public void retrieveLocalData(){
+            PopulateAsyncDB asyncDB = new PopulateAsyncDB();
+            isPopulating = false;
+            asyncDB.execute(isPopulating);
+    }
+
+    //Check Live internet connection
+    public boolean isInternetAvailable(){
+            ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            return cm.getActiveNetworkInfo() != null;
+
+    }
+
+    class PopulateAsyncDB extends AsyncTask<Boolean, Void, Void>{
+
+        DaoAccess daoAccess;
+
+
+        @Override
+        protected Void doInBackground(Boolean... booleans) {
+            database = LocalDatabase.getInstance(context);
+            daoAccess = database.getDaoAccess();
+            //Get data from cloud and populate local database
+            if(booleans[0]) {
+                List<CommitEntity> commitEntities = new ArrayList<>();
+                for (MasterCommit commit : listCommits) {
+                    commitEntities.add(extractCommits(commit));
+                }
+                daoAccess.insertMutipleCommits(commitEntities);
+            }
+            commitEntityList.addAll(daoAccess.fetchAllCommits());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if(progressBar.isShown()){
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+            adapter.notifyDataSetChanged();
+
         }
     }
 }
