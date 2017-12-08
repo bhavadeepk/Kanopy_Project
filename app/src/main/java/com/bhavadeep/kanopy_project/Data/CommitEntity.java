@@ -111,7 +111,7 @@ public class CommitEntity implements Comparable<CommitEntity>{
     }
 
     public Date changeToDateFormat(){
-        SimpleDateFormat df = new SimpleDateFormat("DDD ");
+        SimpleDateFormat df = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
         try {
             return df.parse(date);
         } catch (ParseException e) {
