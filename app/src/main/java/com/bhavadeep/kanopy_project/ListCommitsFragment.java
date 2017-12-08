@@ -76,6 +76,7 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
     private boolean isListShowing;
     private static List<CommitEntity> commitEntityList;
     private Boolean isPopulating;
+    View rootView;
 
     public ListCommitsFragment() {
         // Required empty public constructor
@@ -104,20 +105,25 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_list_commits, container, false);
-        recyclerView = rootView.findViewById(R.id.recyclerView);
-        listCommits = new ArrayList<>();
-        commitEntityList = new ArrayList<>();
-        adapter = new RecyclerViewAdapter(getActivity(), commitEntityList, this);
-         layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(layoutManager);
-        isListShowing = false;
-        database =LocalDatabase.getInstance(context);
 
-        progressBar = rootView.findViewById(R.id.progressBar);
+        if(rootView == null) {
+            // Inflate the layout for this fragment
+            rootView = inflater.inflate(R.layout.fragment_list_commits, container, false);
+            recyclerView = rootView.findViewById(R.id.recyclerView);
+            listCommits = new ArrayList<>();
+            commitEntityList = new ArrayList<>();
+            adapter = new RecyclerViewAdapter(getActivity(), commitEntityList, this);
+            layoutManager = new LinearLayoutManager(getActivity());
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(layoutManager);
+            isListShowing = false;
+            database = LocalDatabase.getInstance(context);
+            progressBar = rootView.findViewById(R.id.progressBar);
 
+            if (!isListShowing) {
+                progressBar.setIndeterminate(true);
+            }
+        }
         return rootView;
     }
 
@@ -130,9 +136,6 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
     @Override
     public void onResume() {
         super.onResume();
-        if(!isListShowing) {
-            progressBar.setIndeterminate(true);
-        }
 
         //Check if internet permission is granted
 

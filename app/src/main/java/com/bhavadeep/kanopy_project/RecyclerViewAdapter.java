@@ -51,6 +51,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return commits.size();
     }
 
+    //Sort by Date
+
     void sortByDate() {
 
         if(toggleDateSort) {
@@ -58,12 +60,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 @Override
                 public int compare(CommitEntity o1, CommitEntity o2) {
 
-
                     return (o1.changeToDateFormat().compareTo(o2.changeToDateFormat()));
-
-
-
-
                 }
             });
 
@@ -81,6 +78,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         notifyDataSetChanged();
     }
 
+    //Sort by Author Name
     void sortByName() {
         if(toggleAuthorSort) {
             toggleAuthorSort = false;
