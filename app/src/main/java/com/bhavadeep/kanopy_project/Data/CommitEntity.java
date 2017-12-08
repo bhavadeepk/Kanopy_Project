@@ -12,6 +12,7 @@ import android.text.format.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 @Entity(tableName = "commit_entity")
 public class CommitEntity implements Comparable<CommitEntity>{
@@ -111,7 +112,7 @@ public class CommitEntity implements Comparable<CommitEntity>{
     }
 
     public Date changeToDateFormat(){
-        SimpleDateFormat df = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
+        SimpleDateFormat df = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy", Locale.US);
         try {
             return df.parse(date);
         } catch (ParseException e) {

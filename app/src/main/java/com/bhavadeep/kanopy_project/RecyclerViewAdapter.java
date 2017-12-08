@@ -1,18 +1,15 @@
 package com.bhavadeep.kanopy_project;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bhavadeep.kanopy_project.Data.CommitEntity;
-import com.bhavadeep.kanopy_project.Models.*;
 
-import java.text.DateFormat;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -22,6 +19,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private Context context;
     private List<CommitEntity> commits;
     private ListItemClickListener listener;
+    private boolean toggleDateSort = false;
+    private boolean toggleAuthorSort = false;
 
     RecyclerViewAdapter(Context mContext, List<CommitEntity> commitList, ListItemClickListener clickListener) {
         context = mContext;
@@ -52,18 +51,46 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return commits.size();
     }
 
-    public void sortByDate() {
-        Collections.sort(commits, new Comparator<CommitEntity>() {
-            @Override
-            public int compare(CommitEntity o1, CommitEntity o2) {
-                return o1.changeToDateFormat().compareTo(o2.changeToDateFormat());
-            }
-        });
+    void sortByDate() {
+
+        if(toggleDateSort) {
+            Collections.sort(commits, new Comparator<CommitEntity>() {
+                @Override
+                public int compare(CommitEntity o1, CommitEntity o2) {
+
+
+                    return (o1.changeToDateFormat().compareTo(o2.changeToDateFormat()));
+
+
+
+
+                }
+            });
+
+        }
+        else
+        {
+            Collections.sort(commits, new Comparator<CommitEntity>() {
+                @Override
+                public int compare(CommitEntity o1, CommitEntity o2) {
+                    return (o2.changeToDateFormat()).compareTo(o1.changeToDateFormat());
+                }
+            });
+        }
+        toggleDateSort=!toggleDateSort;
         notifyDataSetChanged();
     }
 
-    public void sortByName() {
-        Collections.sort(commits);
+    void sortByName() {
+        if(toggleAuthorSort) {
+            toggleAuthorSort = false;
+            Collections.sort(commits);
+        }
+        else {
+            toggleAuthorSort = true;
+            Collections.sort(commits);
+            Collections.reverse(commits);
+        }
         notifyDataSetChanged();
     }
 
