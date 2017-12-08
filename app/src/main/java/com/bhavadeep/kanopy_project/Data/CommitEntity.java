@@ -7,9 +7,14 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.text.format.DateFormat;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Entity(tableName = "commit_entity")
-public class CommitEntity {
+public class CommitEntity implements Comparable<CommitEntity>{
     @Ignore
     private String sha;
 
@@ -100,4 +105,18 @@ public class CommitEntity {
         this.message = message;
     }
 
+    @Override
+    public int compareTo(@NonNull CommitEntity other) {
+        return author.compareTo(other.getAuthor());
+    }
+
+    public Date changeToDateFormat(){
+        SimpleDateFormat df = new SimpleDateFormat("DDD ");
+        try {
+            return df.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

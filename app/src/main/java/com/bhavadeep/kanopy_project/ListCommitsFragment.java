@@ -66,6 +66,9 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
         if(item.getItemId() == R.id.sort_by_date){
             adapter.sortByDate();
         }
+        else if(item.getItemId() == R.id.sort_by_name){
+            adapter.sortByName();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -116,6 +119,12 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
         progressBar = rootView.findViewById(R.id.progressBar);
 
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.action_menu, menu);
     }
 
     @Override
@@ -265,6 +274,8 @@ public class ListCommitsFragment extends Fragment implements RecyclerViewAdapter
            super();
            localDatabase = db;
        }
+
+
 
        CommitEntity extractCommits(MasterCommit masterCommit){
            CommitEntity commitEntity = new CommitEntity();

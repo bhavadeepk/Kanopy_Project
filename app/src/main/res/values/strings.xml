@@ -12,4 +12,5 @@
     <string name="to_view_the_full_commit">To view the full commit</string>
     <string name="click_here">click here</string>
     <string name="sort_by_date">Sort by Date</string>
+    <string name="sort_by_name">Sort By Name</string>
 </resources>

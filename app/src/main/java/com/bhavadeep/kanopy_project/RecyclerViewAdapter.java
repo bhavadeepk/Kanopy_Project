@@ -11,8 +11,10 @@ import android.widget.TextView;
 import com.bhavadeep.kanopy_project.Data.CommitEntity;
 import com.bhavadeep.kanopy_project.Models.*;
 
+import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.CommitViewHolder> {
@@ -51,7 +53,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public void sortByDate() {
-        Collections.reverse(commits);
+        Collections.sort(commits, new Comparator<CommitEntity>() {
+            @Override
+            public int compare(CommitEntity o1, CommitEntity o2) {
+                return o1.changeToDateFormat().compareTo(o2.changeToDateFormat());
+            }
+        });
+        notifyDataSetChanged();
+    }
+
+    public void sortByName() {
+        Collections.sort(commits);
         notifyDataSetChanged();
     }
 
